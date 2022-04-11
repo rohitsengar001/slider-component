@@ -1,11 +1,3 @@
-console.log("slider.js");
-let isApplied = false;
-let isSurveyed = false;
-let offer = "";
-let sStartDate = "";
-var dataMain = {};
-let dynamicPrice = 0;
-let dynamicMinutes = 0;
 const convertFrom24To12Format = (time24) => {
   const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
   const period = +sHours < 12 ? "AM" : "PM";
@@ -49,7 +41,9 @@ $(document).ready(function () {
     max: 2000,
     from: fromVal,
     to: toVal,
+    to_max: 1600,
     step: 50,
+    to_shadow:true,
     prettify: my_prettify,
     drag_interval: true,
     // from_fixed: true,
@@ -65,48 +59,47 @@ $(document).ready(function () {
     },
     onFinish: function (data) {
       fire = true;
-        if ($("#dropdownShifts").val() == 2) {
-          if (toVal != data.to) {
-            toVal = data.to;
-            // console.log("extendable time:", isExtendableShift());
-            if (true) {
-              s2.update({
-                to: toVal2+extendableTime(),
-              });
-            }
-          } else {
-            fromVal = data.from;
-            if (true) {
-              s2.update({
-                to: toVal2 + extendableTime(),
-              });
-            }
+      if ($("#dropdownShifts").val() == 2) {
+        if (toVal != data.to) {
+          let tempTo = toVal;
+          toVal = data.to;
+          if (true) {
+            isGapMaintain() ? increaseOrDecrease() : OnGapNotMaintain();
           }
+    
         } else {
-          // fired on pointer release
-          //while we got changes to the value of upperbound
-          if (toVal != data.to && data.to >= 1100) {
-            console.log(data.to, fromVal + ",ifpart");
-            toVal = data.to;
-            s1.update({
-              from: data.to - interval,
+          fromVal = data.from;
+          if (true) {
+            s2.update({
+              to: toVal2 + extendableTime(),
             });
-          } else {
-            console.log("else part");
-            if (data.from <= 1600) {
-              fromVal = data.from;
-              s1.update({
-                to: data.from + interval,
-              });
-            } else {
-              s1.update({
-                from: 1600,
-              });
-            }
           }
         }
+      } else {
+        // fired on pointer release
+        //while we got changes to the value of upperbound
+        if (toVal != data.to && data.to >= 1100) {
+          console.log(data.to, fromVal + ",ifpart");
+          toVal = data.to;
+          s1.update({
+            from: data.to - interval,
+          });
+        } else {
+          console.log("else part");
+          if (data.from <= 1600) {
+            fromVal = data.from;
+            s1.update({
+              to: data.from + interval,
+            });
+          } else {
+            s1.update({
+              from: 1600,
+            });
+          }
+        }
+      }
     },
-    onUpdate: function (data) {},
+    onUpdate: function (data) { },
   });
   s1 = $("#slider1").data("ionRangeSlider");
   // console.log("s1:"+JSON.stringify(s1));
@@ -216,4 +209,43 @@ function extendableTime() {
 //time Interval
 function checkInterval() {
   return fromVal2 - toVal - 200;
+}
+
+function isGapMaintain() {
+  return (fromVal2 - toVal) >= 200
+}
+function OnGapNotMaintain() {
+  console.log("onGapNotMaintain");
+  //initially increase both bounds of slider2 by 2hrs from slider1
+  fromVal2 = toVal + 200;
+  toVal2 = fromVal2 + 200;
+  //perform updation inside range of slider
+  s2.update({
+    from: fromVal2,
+    to: toVal2,
+    from_min: fromVal2
+  });
+  
+  if (true) {
+    s2.update({
+      to: toVal2 + extendableTime(),
+    })
+  }
+}
+
+function increaseOrDecrease() {
+  console.log('increaseOrDecrease');
+  fromVal2 -= fromVal2 - toVal - 200;
+  toVal2 = fromVal2 + 200;
+  s2.update({
+    from: fromVal2,
+    to: toVal2,
+    from_min: fromVal2,
+    from_max: 2000,
+  });
+  if (true) {
+    s2.update({
+      to: toVal2 + extendableTime(),
+    });
+  }
 }
