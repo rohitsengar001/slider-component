@@ -69,6 +69,7 @@ $(document).ready(function () {
           }
         } else {
           fromVal = data.from;
+          isGapMaintain()?increaseOrDecrease() : OnGapNotMaintain();
           if (true) {
             s2.update({
               to: toVal2 + extendableTime(),
