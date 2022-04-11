@@ -43,30 +43,30 @@ $(document).ready(function () {
     to: toVal,
     to_max: 1600,
     step: 50,
-    to_shadow:true,
+    to_shadow: true,
     prettify: my_prettify,
     drag_interval: true,
     // from_fixed: true,
     // to_fixed: true ,
     min_interval: 100,
-    max_interval: interval - 100,
+    max_interval: 300,
     onStart: function (data) {
       // console.log("DATA:" + JSON.stringify(data));
       timeOfShiftOne = toVal - fromVal;
     },
     onChange: function (data) {
       timeOfShiftOne = data.to - data.from;
+      fromVal = data.from;
+      toVal = data.to;
     },
     onFinish: function (data) {
       fire = true;
       if ($("#dropdownShifts").val() == 2) {
         if (toVal != data.to) {
-          let tempTo = toVal;
           toVal = data.to;
           if (true) {
             isGapMaintain() ? increaseOrDecrease() : OnGapNotMaintain();
           }
-    
         } else {
           fromVal = data.from;
           if (true) {
@@ -99,7 +99,11 @@ $(document).ready(function () {
         }
       }
     },
-    onUpdate: function (data) { },
+    onUpdate: function (data) {
+      fromVal = data.from;
+      toVal = data.to;
+      timeOfShiftOne = toVal - fromVal;
+    },
   });
   s1 = $("#slider1").data("ionRangeSlider");
   // console.log("s1:"+JSON.stringify(s1));
@@ -125,24 +129,39 @@ $(document).ready(function () {
     },
     onChange: function (data) {
       timeOfShiftSecond = data.to - data.from;
+      // fromVal2= data.from;
+      // toVal2= data.to;
     },
     onFinish: function (data) {
       // console.log('onFinish');
       // fired on pointer release
       if (toVal2 != data.to) {
         toVal2 = data.to;
-        s2.update({
-          from: data.to - interval,
-        });
+        console.log("(" + fromVal + "-" + extendableTime() + ")");
+        if (fromVal - extendableTime() < 700) {
+          fromVal = 700;
+          s1.update({
+            to: toVal + extendableTime(),
+          });
+          // if(!isGapMaintain){
+          //   OnGapNotMaintain();
+          // }
+        } else {
+          fromVal = fromVal - extendableTime()
+          s1.update({
+            from: fromVal,
+          })
+        }
+        // s1.update({
+        //   from: fromVal,
+        //   to: toVal
+        // });
       } else {
-        fromVal2 = data.from;
-        s2.update({
-          to: data.from + interval,
-        });
+        // fromVal2 = data.from;
+        // s2.update({
+        //   to: data.from + interval,
+        // });
       }
-      fire = false;
-      // toVal = (toVal-(data.to-data.from));
-      toVal = fromVal2 - 100;
     },
     onUpdate: function (data) {
       // console.log(slotdp);
@@ -175,7 +194,6 @@ function updateSlider2(gap) {
     from_min: toVal + 200,
     from_max: 2000,
   });
-
   timeOfShiftSecond = toVal2 - fromVal2;
   fromVal2 += 200;
   toVal2 += 200;
@@ -210,7 +228,6 @@ function extendableTime() {
 function checkInterval() {
   return fromVal2 - toVal - 200;
 }
-
 function isGapMaintain() {
   return (fromVal2 - toVal) >= 200
 }
@@ -225,14 +242,12 @@ function OnGapNotMaintain() {
     to: toVal2,
     from_min: fromVal2
   });
-  
   if (true) {
     s2.update({
       to: toVal2 + extendableTime(),
     })
   }
 }
-
 function increaseOrDecrease() {
   console.log('increaseOrDecrease');
   fromVal2 -= fromVal2 - toVal - 200;
@@ -248,4 +263,7 @@ function increaseOrDecrease() {
       to: toVal2 + extendableTime(),
     });
   }
+}
+function showAllCordinates() {
+  console.log("(", fromVal + "," + toVal + "," + fromVal2 + "," + toVal2 + ")");
 }

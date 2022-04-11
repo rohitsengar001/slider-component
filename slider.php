@@ -47,6 +47,8 @@
     </div>
     <button type="button" class="btn btn-primary" onclick="isExtendableShift()">IsExtendableShift</button>
     <button type="button" class="btn btn-primary"onclick="extendableTime()">ExtendableTime</button>
+    <button type="button" class="btn btn-primary"onclick="showAllCordinates()">showAllCordinates</button>
+    
     <!--Plugin JavaScript file-->
     <script src="./slider.js"></script>
 </body>
