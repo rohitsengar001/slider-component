@@ -53,6 +53,7 @@ $(document).ready(function () {
     onStart: function (data) {
       // console.log("DATA:" + JSON.stringify(data));
       timeOfShiftOne = toVal - fromVal;
+      
     },
     onChange: function (data) {
       timeOfShiftOne = data.to - data.from;
@@ -61,6 +62,7 @@ $(document).ready(function () {
     },
     onFinish: function (data) {
       fire = true;
+      toogleForBoundarySlider1();
       if ($("#dropdownShifts").val() == 2) {
         if (toVal != data.to) {
           toVal = data.to;
@@ -69,7 +71,7 @@ $(document).ready(function () {
           }
         } else {
           fromVal = data.from;
-          isGapMaintain()?increaseOrDecreaseSlider2() : OnGapNotMaintain();
+          isGapMaintain() ? increaseOrDecreaseSlider2() : OnGapNotMaintain();
           // if (true) {
           //   s2.update({
           //     to: toVal2 + extendableTime(),
@@ -79,24 +81,15 @@ $(document).ready(function () {
       } else {
         // fired on pointer release
         //while we got changes to the value of upperbound
-        if (toVal != data.to && data.to >= 1100) {
-          console.log(data.to, fromVal + ",ifpart");
+        
+        if (toVal != data.to) {
+          console.log("if part");
           toVal = data.to;
-          s1.update({
-            from: data.to - interval,
-          });
+          isExtendableShift() ?? s1.update({ from: fromVal + extendableTime()});
         } else {
           console.log("else part");
-          if (true) {
-            fromVal = data.from;
-            s1.update({
-              to: data.from + interval,
-            });
-          } else {
-            s1.update({
-              from: 1600,
-            });
-          }
+          fromVal = data.from;
+          isExtendableShift() ?? s1.update({ to: toVal + extendableTime()});
         }
       }
     },
@@ -127,20 +120,21 @@ $(document).ready(function () {
     max_interval: 300,
     onStart: function (data) {
       timeOfShiftSecond = data.to - data.from;
+      toogleForBoundarySlider1();
     },
     onChange: function (data) {
-      timeOfShiftSecond = data.to - data.from;
       // fromVal2= data.from;
       // toVal2= data.to;
     },
     onFinish: function (data) {
       // console.log('onFinish');
+      timeOfShiftSecond = data.to - data.from;
       // fired on pointer release
       //for change in upperbound of slider2
       if (toVal2 != data.to) {
         toVal2 = data.to;
         console.log("(" + fromVal + "-" + extendableTime() + ")");
-        
+
         //check if first slider lowerbound is smaller than 700 after add extendableTime
         //extendableTime: whether it's postive or negative
         //then update upperbound of slider1 if space is not available besides lowerbound
@@ -149,27 +143,27 @@ $(document).ready(function () {
           s1.update({
             to: toVal + extendableTime(),
           });
-          
+
         } else {
           fromVal = fromVal - extendableTime()
           s1.update({
             from: fromVal,
           })
         }
-        
+
       } else {   //change in lowerbound slider2
-          fromVal2 = data.from;
-          if(fromVal - extendableTime() <700){
-            s1.update({
-              to: toVal + extendableTime(),
-            });
-          }else{
-            fromVal = fromVal - extendableTime();
-            s1.update({
-              from:fromVal,
-            })
-          }
-          
+        fromVal2 = data.from;
+        if (fromVal - extendableTime() < 700) {
+          s1.update({
+            to: toVal + extendableTime(),
+          });
+        } else {
+          fromVal = fromVal - extendableTime();
+          s1.update({
+            from: fromVal,
+          })
+        }
+
       }
     },
     onUpdate: function (data) {
@@ -276,4 +270,16 @@ function increaseOrDecreaseSlider2() {
 }
 function showAllCordinates() {
   console.log("(", fromVal + "," + toVal + "," + fromVal2 + "," + toVal2 + ")");
+}
+
+function toogleForBoundarySlider1(){
+  if($("#dropdownShifts").val() == 2){
+    s1.update({
+      to_max:1600,
+    });
+  }else{
+    s1.update({
+      to_max:2000,
+    });
+  }
 }
