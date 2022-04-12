@@ -60,7 +60,7 @@ $(document).ready(function () {
       timeOfShiftOne = data.to - data.from;
       prevlb = fromVal;
       // fromVal = data.from;
-      prevub = toVal
+      prevub = toVal;
       // toVal = data.to;
       // console.log("=>" + prevlb, prevub);
     },
@@ -79,30 +79,16 @@ $(document).ready(function () {
           isGapMaintain() ? increaseOrDecreaseSlider2() : OnGapNotMaintain();
         }
       } else {
+        //this secton running under the current changes occurred inside the control of first slider
         let changeValue; // stores the changes in value
         // fired on pointer release
-        //while we got changes to the value of upperbound
-        if (toVal != prevub && fromVal == prevlb) {
-          changeValue = toVal > prevub ? toVal - prevub : prevub - toVal;
-          console.log("if part fromVal:", fromVal);
-          if (fromVal > 700) {
-            console.log("toVal >=1100=>true");
-            toVal = data.to;
-            s1.update({ from: fromVal - changeValue });
-          } else {  
-            console.log("else part");
-            s1.update({
-              from: fromVal,
-            });
-          }
-        } else {
-          console.log("else part")
-          changeValue = fromVal > prevlb ? fromVal - prevlb : prevlb - fromVal;
-          console.log(fromVal);
-          if (true) {
-            fromVal = data.from;
-            s1.update({ to: toVal + changeValue });
-          }
+        //while we got changes inside the upperbound
+        if(toVal != prevub && fromVal != prevlb){
+          console.log("interval changes");
+        }else if(fromVal!=prevlb){
+          console.log("fromval change");
+        }else{
+          console.log("toval change");
         }
       }
     },
@@ -118,9 +104,7 @@ $(document).ready(function () {
           toVal = data.to;
           timeOfShiftOne = toVal - fromVal;
         }
-
       }
-
     },
   });
   s1 = $("#slider1").data("ionRangeSlider");
