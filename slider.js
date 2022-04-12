@@ -35,7 +35,7 @@ $(document).ready(function () {
   $("#slider1").ionRangeSlider({
     skin: "round",
     type: "double",
-    grid: false,
+    grid: true,
     grid_num: 26,
     min: 700,
     max: 2000,
@@ -65,16 +65,16 @@ $(document).ready(function () {
         if (toVal != data.to) {
           toVal = data.to;
           if (true) {
-            isGapMaintain() ? increaseOrDecrease() : OnGapNotMaintain();
+            isGapMaintain() ? increaseOrDecreaseSlider2() : OnGapNotMaintain();
           }
         } else {
           fromVal = data.from;
-          isGapMaintain()?increaseOrDecrease() : OnGapNotMaintain();
-          if (true) {
-            s2.update({
-              to: toVal2 + extendableTime(),
-            });
-          }
+          isGapMaintain()?increaseOrDecreaseSlider2() : OnGapNotMaintain();
+          // if (true) {
+          //   s2.update({
+          //     to: toVal2 + extendableTime(),
+          //   });
+          // }
         }
       } else {
         // fired on pointer release
@@ -87,7 +87,7 @@ $(document).ready(function () {
           });
         } else {
           console.log("else part");
-          if (data.from <= 1600) {
+          if (true) {
             fromVal = data.from;
             s1.update({
               to: data.from + interval,
@@ -112,7 +112,7 @@ $(document).ready(function () {
   $("#slider2").ionRangeSlider({
     skin: "round",
     type: "double",
-    grid: false,
+    grid: true,
     grid_num: 26,
     min: 700,
     max: 2000,
@@ -136,36 +136,45 @@ $(document).ready(function () {
     onFinish: function (data) {
       // console.log('onFinish');
       // fired on pointer release
+      //for change in upperbound of slider2
       if (toVal2 != data.to) {
         toVal2 = data.to;
         console.log("(" + fromVal + "-" + extendableTime() + ")");
+        
+        //check if first slider lowerbound is smaller than 700 after add extendableTime
+        //extendableTime: whether it's postive or negative
+        //then update upperbound of slider1 if space is not available besides lowerbound
         if (fromVal - extendableTime() < 700) {
           fromVal = 700;
           s1.update({
             to: toVal + extendableTime(),
           });
-          // if(!isGapMaintain){
-          //   OnGapNotMaintain();
-          // }
+          
         } else {
           fromVal = fromVal - extendableTime()
           s1.update({
             from: fromVal,
           })
         }
-        // s1.update({
-        //   from: fromVal,
-        //   to: toVal
-        // });
-      } else {
-        // fromVal2 = data.from;
-        // s2.update({
-        //   to: data.from + interval,
-        // });
+        
+      } else {   //change in lowerbound slider2
+          fromVal2 = data.from;
+          if(fromVal - extendableTime() <700){
+            s1.update({
+              to: toVal + extendableTime(),
+            });
+          }else{
+            fromVal = fromVal - extendableTime();
+            s1.update({
+              from:fromVal,
+            })
+          }
+          
       }
     },
     onUpdate: function (data) {
       // console.log(slotdp);
+      timeOfShiftSecond = data.to - data.from;
     },
   });
   s2 = $("#slider2").data("ionRangeSlider");
@@ -249,8 +258,8 @@ function OnGapNotMaintain() {
     })
   }
 }
-function increaseOrDecrease() {
-  console.log('increaseOrDecrease');
+function increaseOrDecreaseSlider2() {
+  console.log('increaseOrDecreaseSlider2');
   fromVal2 -= fromVal2 - toVal - 200;
   toVal2 = fromVal2 + 200;
   s2.update({
