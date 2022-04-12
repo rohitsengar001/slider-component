@@ -31,6 +31,8 @@ let toVal2 = 1200;
 var s1;
 var s2;
 let fire = true;
+let prevub;
+let prevlb;
 $(document).ready(function () {
   $("#slider1").ionRangeSlider({
     skin: "round",
@@ -52,13 +54,18 @@ $(document).ready(function () {
     max_interval: 300,
     onStart: function (data) {
       timeOfShiftOne = toVal - fromVal;
+      console.log("onstart");
     },
     onChange: function (data) {
       timeOfShiftOne = data.to - data.from;
-      fromVal = data.from;
-      toVal = data.to;
+      prevlb = fromVal;
+      // fromVal = data.from;
+      prevub = toVal
+      // toVal = data.to;
+      // console.log("=>" + prevlb, prevub);
     },
     onFinish: function (data) {
+      console.log("onfinish");
       fire = true;
       toogleForBoundarySlider1();
       if ($("#dropdownShifts").val() == 2) {
@@ -72,22 +79,47 @@ $(document).ready(function () {
           isGapMaintain() ? increaseOrDecreaseSlider2() : OnGapNotMaintain();
         }
       } else {
+        let changeValue; // stores the changes in value
         // fired on pointer release
         //while we got changes to the value of upperbound
-        if (toVal != data.to) {
-          toVal = data.to;
-          isExtendableShift() ??
-            s1.update({ from: fromVal + extendableTime() });
+        if (toVal != prevub) {
+          changeValue = toVal > prevub ? toVal - prevub : prevub - toVal;
+          console.log("if part fromVal:",fromVal);
+          if (fromVal > 700) {
+            console.log("toVal >=1100=>true");
+            toVal = data.to;
+            s1.update({ from: fromVal - changeValue });
+          }else{
+            s1.update({
+              from: fromVal,
+            });
+          }
         } else {
-          fromVal = data.from;
-          isExtendableShift() ?? s1.update({ to: toVal + extendableTime() });
+          console.log("else part")
+          changeValue = fromVal > prevlb ? fromVal - prevlb : prevlb - fromVal;
+          console.log(changeValue);
+          if (toVal != 2000) {  
+            fromVal = data.from;
+            s1.update({ to: toVal + changeValue });
+          }
         }
       }
     },
     onUpdate: function (data) {
-      fromVal = data.from;
-      toVal = data.to;
-      timeOfShiftOne = toVal - fromVal;
+      console.log("udate form");
+      if ($("#dropdownShifts").val() == 2) {
+        fromVal = data.from;
+        toVal = data.to;
+        timeOfShiftOne = toVal - fromVal;
+      }else{
+        if(fromVal>700 ){
+          fromVal = data.from;
+        toVal = data.to;
+        timeOfShiftOne = toVal - fromVal;
+        }
+        
+      }
+     
     },
   });
   s1 = $("#slider1").data("ionRangeSlider");
@@ -203,9 +235,11 @@ $("#dropdownShifts").on("change", function () {
 });
 function isExtendableShift() {
   let AccumulationShiftTime = timeOfShiftOne + timeOfShiftSecond;
+  console.log(AccumulationShiftTime >= 400 ? false : true);
   return AccumulationShiftTime >= 400 ? false : true;
 }
 function extendableTime() {
+  console.log(400 - (timeOfShiftOne + timeOfShiftSecond));
   return 400 - (timeOfShiftOne + timeOfShiftSecond);
 }
 //time Interval
@@ -255,10 +289,12 @@ function toogleForBoundarySlider1() {
   if ($("#dropdownShifts").val() == 2) {
     s1.update({
       to_max: 1600,
+      max_interval: 300,
     });
   } else {
     s1.update({
       to_max: 2000,
+      max_interval: 400,
     });
   }
 }
