@@ -82,14 +82,15 @@ $(document).ready(function () {
         let changeValue; // stores the changes in value
         // fired on pointer release
         //while we got changes to the value of upperbound
-        if (toVal != prevub) {
+        if (toVal != prevub && fromVal == prevlb) {
           changeValue = toVal > prevub ? toVal - prevub : prevub - toVal;
-          console.log("if part fromVal:",fromVal);
+          console.log("if part fromVal:", fromVal);
           if (fromVal > 700) {
             console.log("toVal >=1100=>true");
             toVal = data.to;
             s1.update({ from: fromVal - changeValue });
-          }else{
+          } else {  
+            console.log("else part");
             s1.update({
               from: fromVal,
             });
@@ -97,8 +98,8 @@ $(document).ready(function () {
         } else {
           console.log("else part")
           changeValue = fromVal > prevlb ? fromVal - prevlb : prevlb - fromVal;
-          console.log(changeValue);
-          if (toVal != 2000) {  
+          console.log(fromVal);
+          if (true) {
             fromVal = data.from;
             s1.update({ to: toVal + changeValue });
           }
@@ -111,15 +112,15 @@ $(document).ready(function () {
         fromVal = data.from;
         toVal = data.to;
         timeOfShiftOne = toVal - fromVal;
-      }else{
-        if(fromVal>700 ){
+      } else {
+        if (fromVal > 700) {
           fromVal = data.from;
-        toVal = data.to;
-        timeOfShiftOne = toVal - fromVal;
+          toVal = data.to;
+          timeOfShiftOne = toVal - fromVal;
         }
-        
+
       }
-     
+
     },
   });
   s1 = $("#slider1").data("ionRangeSlider");
@@ -297,4 +298,9 @@ function toogleForBoundarySlider1() {
       max_interval: 400,
     });
   }
+}
+
+function checkIntervalFirstSlide() {
+  console.log(toVal - fromVal);
+  return toVal - fromVal;
 }
