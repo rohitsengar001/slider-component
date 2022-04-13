@@ -83,12 +83,41 @@ $(document).ready(function () {
         let changeValue; // stores the changes in value
         // fired on pointer release
         //while we got changes inside the upperbound
-        if(toVal != prevub && fromVal != prevlb){
+        //case 1: when interval change
+        if (toVal != prevub && fromVal != prevlb) {
           console.log("interval changes");
-        }else if(fromVal!=prevlb){
+        } else if (fromVal != prevlb ) { 
+          //case 2: when lower-bound change
           console.log("fromval change");
-        }else{
-          console.log("toval change");
+          changeValue = fromVal - prevlb;
+          if(fromVal <= 1600){
+            s1.update({
+              to: toVal + changeValue,
+            });
+          }else{
+            s1.update({
+              from : prevlb,
+              to : toVal,
+            });
+          }
+        } else {
+          // case 3: when upperbound change
+          changeValue = toVal - prevub;
+          console.log("toval change"+ changeValue);
+          if (data.to >= 1100) {
+            console.log(data.from+","+data.to);
+            console.log("case: from>1100");
+            // toVal = data.to;
+            s1.update({
+              from: prevlb + changeValue,
+            });
+            console.log(data.from+","+data.to);
+          } else {
+            s1.update({
+              to: prevub,
+              from: prevlb,
+            });
+          }
         }
       }
     },
@@ -99,7 +128,7 @@ $(document).ready(function () {
         toVal = data.to;
         timeOfShiftOne = toVal - fromVal;
       } else {
-        if (fromVal > 700) {
+        if (true) {
           fromVal = data.from;
           toVal = data.to;
           timeOfShiftOne = toVal - fromVal;
@@ -231,9 +260,12 @@ function extendableTime() {
 function checkInterval() {
   return fromVal2 - toVal - 200;
 }
+
+//* @return: boolean
 function isGapMaintain() {
   return fromVal2 - toVal >= 200;
 }
+//increase tha gap b/w first and second slide
 function OnGapNotMaintain() {
   // console.log("onGapNotMaintain");
   //initially increase both bounds of slider2 by 2hrs from slider1
@@ -267,6 +299,7 @@ function increaseOrDecreaseSlider2() {
     });
   }
 }
+//for testing purpose
 function showAllCordinates() {
   console.log("(", fromVal + "," + toVal + "," + fromVal2 + "," + toVal2 + ")");
 }
