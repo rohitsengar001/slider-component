@@ -50,8 +50,8 @@ $(document).ready(function () {
     drag_interval: true,
     // from_fixed: true,
     // to_fixed: true ,
-    min_interval: 100,
-    max_interval: 300,
+    // min_interval: 100,
+    // max_interval: 300,
     onStart: function (data) {
       timeOfShiftOne = toVal - fromVal;
       console.log("onstart");
@@ -323,7 +323,7 @@ function toogleForBoundarySlider1() {
   } else {
     s1.update({
       to_max: 2000,
-      max_interval: 400,
+      // max_interval: 400,
     });
   }
 }
