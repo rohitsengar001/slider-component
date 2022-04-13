@@ -247,16 +247,21 @@ $("#dropdownShifts").on("change", function () {
   updateSlider();
   updateSlider2(interval);
 });
+
+// @return(): boolean
 function isExtendableShift() {
   let AccumulationShiftTime = timeOfShiftOne + timeOfShiftSecond;
   console.log(AccumulationShiftTime >= 400 ? false : true);
   return AccumulationShiftTime >= 400 ? false : true;
 }
+
+// check extendableTime if it's availabe or not whether it's availabe in first or secornd slide
+// @return :number(extendable time)
 function extendableTime() {
   console.log(400 - (timeOfShiftOne + timeOfShiftSecond));
   return 400 - (timeOfShiftOne + timeOfShiftSecond);
 }
-//time Interval
+
 function checkInterval() {
   return fromVal2 - toVal - 200;
 }
@@ -265,7 +270,9 @@ function checkInterval() {
 function isGapMaintain() {
   return fromVal2 - toVal >= 200;
 }
+
 //increase tha gap b/w first and second slide
+//if gap is not maintain then increase the gap b/w slides
 function OnGapNotMaintain() {
   // console.log("onGapNotMaintain");
   //initially increase both bounds of slider2 by 2hrs from slider1
@@ -283,6 +290,8 @@ function OnGapNotMaintain() {
     });
   }
 }
+
+//while changing pefrom in slider1
 function increaseOrDecreaseSlider2() {
   console.log("increaseOrDecreaseSlider2");
   fromVal2 -= fromVal2 - toVal - 200;
@@ -303,6 +312,8 @@ function increaseOrDecreaseSlider2() {
 function showAllCordinates() {
   console.log("(", fromVal + "," + toVal + "," + fromVal2 + "," + toVal2 + ")");
 }
+
+// changes boundary interval inaccordance their shifts
 function toogleForBoundarySlider1() {
   if ($("#dropdownShifts").val() == 2) {
     s1.update({
@@ -316,7 +327,7 @@ function toogleForBoundarySlider1() {
     });
   }
 }
-
+//make for testing purpose only
 function checkIntervalFirstSlide() {
   console.log(toVal - fromVal);
   return toVal - fromVal;
