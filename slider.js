@@ -232,6 +232,7 @@ function updateSlider2(gap) {
   timeOfShiftSecond = toVal2 - fromVal2;
   fromVal2 += 200;
   toVal2 += 200;
+  toogleForBoundarySlider1();
 }
 //on Shift=2
 $("#dropdownShifts").on("change", function () {
@@ -319,6 +320,7 @@ function toogleForBoundarySlider1() {
     s1.update({
       to_max: 1600,
       max_interval: 300,
+      min_interval:100,
     });
   } else {
     s1.update({
