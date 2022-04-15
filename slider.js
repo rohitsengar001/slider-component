@@ -4,25 +4,42 @@ const convertFrom24To12Format = (time24) => {
   const hours = +sHours % 12 || 12;
   return `${hours}:${minutes} ${period}`;
 };
+function numberFormat(str) {
+  let arr = Array.from(str);
+  if (arr[0] != '0') {
+    if (arr[1])
+      return str;
+    else if (arr[1]) {
+      return arr[1] + "0";
+    } else {
+      return str
+    }
+  }
+  else if (arr[0] === '0') {
+    if (arr[1]) return arr[1];
+  }
+  return '0'
+}
 function my_prettify(n) {
+  console.log("value of n:",n);
   let a = parseInt(n) / 100;
   let b = a.toString().split(".");
   // console.log(b[0], b[1]);
   let d = "00";
-  let flag =false;
+  let flag = false;
   if (b[1]) {
-    flag=true;
-    if ( b[1] > 60 && b[1] ) {
-      let min = parseInt(+b[1] /60);
+    flag = true;
+    if (parseInt(+numberFormat(b[1])) > 60 && b[1]) {
+      let min = parseInt(+b[1] / 60);
       let sec = String(+b[1] % 60)
-      b[0] = String(parseInt(b[0])+min);
-      d = sec < 10 ? "0"+sec: sec;
+      b[0] = String(parseInt(b[0]) + min);
+      d = sec < 10 ? "0" + sec : sec;
     } else {
       d = b[1];
     }
   }
   let c = b[0] + ":" + d + ":00";
-  console.log("=>",c);
+  console.log("=>", c);
   return convertFrom24To12Format(c);
 }
 //slider1 logic
@@ -91,32 +108,32 @@ $(document).ready(function () {
         //case 1: when interval change
         if (toVal != prevub && fromVal != prevlb) {
           console.log("interval changes");
-        } else if (fromVal != prevlb ) { 
+        } else if (fromVal != prevlb) {
           //case 2: when lower-bound change
           console.log("fromval change");
           changeValue = fromVal - prevlb;
-          if(fromVal <= 1600){
+          if (fromVal <= 1600) {
             s1.update({
               to: toVal + changeValue,
             });
-          }else{
+          } else {
             s1.update({
-              from : prevlb,
-              to : toVal,
+              from: prevlb,
+              to: toVal,
             });
           }
         } else {
           // case 3: when upperbound change
           changeValue = toVal - prevub;
-          console.log("toval change"+ changeValue);
+          console.log("toval change" + changeValue);
           if (data.to >= 1100) {
-            console.log(data.from+","+data.to);
+            console.log(data.from + "," + data.to);
             console.log("case: from>1100");
             // toVal = data.to;
             s1.update({
               from: prevlb + changeValue,
             });
-            console.log(data.from+","+data.to);
+            console.log(data.from + "," + data.to);
           } else {
             s1.update({
               to: prevub,
@@ -325,7 +342,7 @@ function toogleForBoundarySlider1() {
     s1.update({
       to_max: 1600,
       max_interval: 300,
-      min_interval:100,
+      min_interval: 100,
     });
   } else {
     s1.update({
