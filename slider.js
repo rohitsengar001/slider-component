@@ -9,15 +9,20 @@ function my_prettify(n) {
   let b = a.toString().split(".");
   // console.log(b[0], b[1]);
   let d = "00";
+  let flag =false;
   if (b[1]) {
-    if (b[1] < 50 && b[1] != 5) {
-      d = "00";
+    flag=true;
+    if ( b[1] > 60 && b[1] ) {
+      let min = parseInt(+b[1] /60);
+      let sec = String(+b[1] % 60)
+      b[0] = String(parseInt(b[0])+min);
+      d = sec < 10 ? "0"+sec: sec;
     } else {
-      d = "30";
+      d = b[1];
     }
   }
   let c = b[0] + ":" + d + ":00";
-  // console.log(c);
+  console.log("=>",c);
   return convertFrom24To12Format(c);
 }
 //slider1 logic
@@ -44,7 +49,7 @@ $(document).ready(function () {
     from: fromVal,
     to: toVal,
     to_max: 1600,
-    step: 50,
+    step: 1,
     to_shadow: true,
     prettify: my_prettify,
     drag_interval: true,
@@ -147,7 +152,7 @@ $(document).ready(function () {
     max: 2000,
     from: fromVal2,
     to: toVal2,
-    step: 50,
+    step: 1,
     prettify: my_prettify,
     drag_interval: true,
     from_shadow: true,
