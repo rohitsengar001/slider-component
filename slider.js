@@ -1,24 +1,26 @@
 const convertFrom24To12Format = (time24) => {
-  const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
+  const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{1,2})/).slice(1);
   const period = +sHours < 12 ? "AM" : "PM";
-  const hours = +sHours % 12 || 12;
+  // const hours = +sHours % 12 || 12;
+  hours = +sHours > 12 ? +sHours% 12 : +sHours;
+  console.log("convert=>"+`${hours}:${minutes} ${period}`);
   return `${hours}:${minutes} ${period}`;
 };
-function numberFormat(str) {
-  let arr = Array.from(str);
-  if (arr[0] != '0') {
-    if (arr[1])
-      return str;
-    else if (arr[1]) {
-      return arr[1] + "0";
-    } else {
-      return str
-    }
+function numberFormat(str){
+  let arr =Array.from(str);
+  if(arr[0] != '0'){
+      if(arr[1] )
+         return str;
+      else if(!arr[1]) {
+          return "0"+arr[0];
+      }else{
+          return arr[1]+"0"
+      }         
+  } 
+  else if(arr[0] === '0'){
+      if(arr[1]) return arr[1];
   }
-  else if (arr[0] === '0') {
-    if (arr[1]) return arr[1];
-  }
-  return '0'
+  return '00'
 }
 function my_prettify(n) {
   console.log("value of n:",n);
@@ -29,17 +31,19 @@ function my_prettify(n) {
   let flag = false;
   if (b[1]) {
     flag = true;
-    if (parseInt(+numberFormat(b[1])) > 60 && b[1]) {
-      let min = parseInt(+b[1] / 60);
-      let sec = String(+b[1] % 60)
-      b[0] = String(parseInt(b[0]) + min);
-      d = sec < 10 ? "0" + sec : sec;
+    if (+numberFormat(b[1]) > 60 && b[1]) {
+      let hrs = 1;
+      let min = (+b[1] % 60)/100
+      b[0] = String((+b[0]) + hrs);
+      //manage digits in minutes
+      d = numberFormat(min);
+      // d=(min);
     } else {
       d = b[1];
     }
   }
   let c = b[0] + ":" + d + ":00";
-  console.log("=>", c);
+  console.log("=>", c+","+d);
   return convertFrom24To12Format(c);
 }
 //slider1 logic
