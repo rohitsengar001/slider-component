@@ -4,6 +4,54 @@ const convertFrom24To12Format = (time24) => {
   const hours = +sHours % 12 || 12;
   return `${hours}:${minutes} ${period}`;
 };
+function numberFormat(str) {
+  let arr = Array.from(str);
+  if (arr[0] != '0') {
+    if (arr[1])
+      return str;
+    else if (!arr[1]) {
+      return "0" + arr[0];
+    } else {
+      return arr[1] + "0"
+    }
+  }
+  else if (arr[0] === '0') {
+    if (arr[1]) return "0" + arr[1];
+
+  }
+  return '00'
+}
+function convertNumToTime(number) {
+  // Check sign of given number
+  var sign = (number >= 0) ? 1 : -1;
+
+  // Set positive value of number of sign negative
+  number = number * sign;
+
+  // Separate the int from the decimal part
+  var hour = Math.floor(number);
+  var decpart = number - hour;
+
+  var min = 1 / 60;
+  // Round to nearest minute
+  decpart = min * Math.round(decpart / min);
+
+  var minute = Math.floor(decpart * 60) + '';
+
+  // Add padding if need
+  if (minute.length < 2) {
+  minute = '0' + minute; 
+  }
+
+  // Add Sign in final result
+  sign = sign == 1 ? '' : '-';
+
+  // Concate hours and minutes
+  time = sign + hour + ':' + minute;
+
+  return time;
+}
+
 function my_prettify(n) {
   let a = parseInt(n) / 100;
   let b = a.toString().split(".");
@@ -86,32 +134,32 @@ $(document).ready(function () {
         //case 1: when interval change
         if (toVal != prevub && fromVal != prevlb) {
           console.log("interval changes");
-        } else if (fromVal != prevlb ) { 
+        } else if (fromVal != prevlb) {
           //case 2: when lower-bound change
           console.log("fromval change");
           changeValue = fromVal - prevlb;
-          if(fromVal <= 2000 -interval){
-            console.log("changeValue:",changeValue);
-            (checkIntervalFirstSlide() != interval) ? s1.update({to: toVal + changeValue,}): null;
-          
-          }else{
+          if (fromVal <= 2000 - interval) {
+            console.log("changeValue:", changeValue);
+            (checkIntervalFirstSlide() != interval) ? s1.update({ to: toVal + changeValue, }) : null;
+
+          } else {
             s1.update({
-              from : prevlb,
-              to : toVal,
+              from: prevlb,
+              to: toVal,
             });
           }
         } else {
           // case 3: when upperbound change
           changeValue = toVal - prevub;
-          console.log("toval change"+ changeValue);
-          if (data.to >= 700+interval) {
-            console.log(data.from+","+data.to);
+          console.log("toval change" + changeValue);
+          if (data.to >= 700 + interval) {
+            console.log(data.from + "," + data.to);
             console.log("case: from>1100");
             // toVal = data.to;
             s1.update({
               from: prevlb + changeValue,
             });
-            console.log(data.from+","+data.to);
+            console.log(data.from + "," + data.to);
           } else {
             s1.update({
               to: prevub,
@@ -257,7 +305,7 @@ function isExtendableShift(interval) {
 
 // check extendableTime if it's availabe or not whether it's availabe in first or secornd slide
 // @return :number(extendable time)
-function extendableTime(interval) {
+function extendableTime() {
   console.log(interval - (timeOfShiftOne + timeOfShiftSecond));
   return interval - (timeOfShiftOne + timeOfShiftSecond);
 }
