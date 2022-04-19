@@ -21,11 +21,11 @@ function my_prettify(n) {
   return convertFrom24To12Format(c);
 }
 //slider1 logic
-let interval = 400;
+let interval = 250;
 let timeOfShiftOne;
 let timeOfShiftSecond;
 let fromVal = 800;
-let toVal = 1200;
+let toVal = fromVal + interval;
 let fromVal2 = 800;
 let toVal2 = 1200;
 var s1;
@@ -90,10 +90,10 @@ $(document).ready(function () {
           //case 2: when lower-bound change
           console.log("fromval change");
           changeValue = fromVal - prevlb;
-          if(fromVal <= 1600){
-            s1.update({
-              to: toVal + changeValue,
-            });
+          if(fromVal <= 2000 -interval){
+            console.log("changeValue:",changeValue);
+            (checkIntervalFirstSlide() != interval) ? s1.update({to: toVal + changeValue,}): null;
+          
           }else{
             s1.update({
               from : prevlb,
@@ -104,7 +104,7 @@ $(document).ready(function () {
           // case 3: when upperbound change
           changeValue = toVal - prevub;
           console.log("toval change"+ changeValue);
-          if (data.to >= 1100) {
+          if (data.to >= 700+interval) {
             console.log(data.from+","+data.to);
             console.log("case: from>1100");
             // toVal = data.to;
@@ -206,7 +206,7 @@ $(document).ready(function () {
   s2 = $("#slider2").data("ionRangeSlider");
 });
 function updateSlider() {
-  // console.log("SLIDER 1");
+  console.log("updateSlider 1");
   $("#wizardErr").html("");
   $("#slider1Cont").show();
   fromVal = 800;
@@ -249,17 +249,17 @@ $("#dropdownShifts").on("change", function () {
 });
 
 // @return(): boolean
-function isExtendableShift() {
+function isExtendableShift(interval) {
   let AccumulationShiftTime = timeOfShiftOne + timeOfShiftSecond;
-  console.log(AccumulationShiftTime >= 400 ? false : true);
-  return AccumulationShiftTime >= 400 ? false : true;
+  console.log(AccumulationShiftTime >= interval ? false : true);
+  return AccumulationShiftTime >= interval ? false : true;
 }
 
 // check extendableTime if it's availabe or not whether it's availabe in first or secornd slide
 // @return :number(extendable time)
-function extendableTime() {
-  console.log(400 - (timeOfShiftOne + timeOfShiftSecond));
-  return 400 - (timeOfShiftOne + timeOfShiftSecond);
+function extendableTime(interval) {
+  console.log(interval - (timeOfShiftOne + timeOfShiftSecond));
+  return interval - (timeOfShiftOne + timeOfShiftSecond);
 }
 
 function checkInterval() {
