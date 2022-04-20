@@ -297,17 +297,18 @@ $("#dropdownShifts").on("change", function () {
 });
 
 // @return(): boolean
-function isExtendableShift(interval) {
+function isExtendableShift() {
   let AccumulationShiftTime = timeOfShiftOne + timeOfShiftSecond;
-  console.log(AccumulationShiftTime >= interval ? false : true);
-  return AccumulationShiftTime >= interval ? false : true;
+  console.log(AccumulationShiftTime >= 2*interval ? false : true);
+  return AccumulationShiftTime >= 2*interval ? false : true;
 }
 
 // check extendableTime if it's availabe or not whether it's availabe in first or secornd slide
 // @return :number(extendable time)
 function extendableTime() {
-  console.log(interval - (timeOfShiftOne + timeOfShiftSecond));
-  return interval - (timeOfShiftOne + timeOfShiftSecond);
+ console.log(2*interval,timeOfShiftOne,timeOfShiftSecond);
+  console.log(2*interval - (timeOfShiftOne + timeOfShiftSecond));
+  return 2*interval - (timeOfShiftOne + timeOfShiftSecond);
 }
 
 function checkInterval() {
@@ -380,3 +381,9 @@ function checkIntervalFirstSlide() {
   console.log(toVal - fromVal);
   return toVal - fromVal;
 }
+
+// function roundOffCordinates(){
+//   fromVal = Math.floor(fromVal);
+//   toval = 
+// }
+
