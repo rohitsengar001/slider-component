@@ -40,7 +40,7 @@ function convertNumToTime(number) {
 
   // Add padding if need
   if (minute.length < 2) {
-  minute = '0' + minute; 
+    minute = '0' + minute;
   }
 
   // Add Sign in final result
@@ -265,52 +265,59 @@ function updateSlider() {
   });
   timeOfShiftOne = toVal - fromVal;
 }
-function updateSlider2(gap) {
+function updateSlider2() {
   $("#wizardErr").html("");
   // console.log("SLIDER 2");
   // console.log("Interval: "+(interval*2)+":"+gap);
-  fromVal2 = toVal;
-  toVal2 = fromVal2 + (interval * 2 - gap);
+  fromVal2 = toVal +200;
+  toVal2 = fromVal2 +interval*2- checkIntervalFirstSlide();
   s2.update({
-    from: fromVal2 + 200, //2 hrs gap
-    to: toVal2 + 200,
+    from: fromVal2,//2 hrs gap
+    to: toVal2,
     from_min: toVal + 200,
     from_max: 2000,
   });
   timeOfShiftSecond = toVal2 - fromVal2;
-  fromVal2 += 200;
-  toVal2 += 200;
 }
-//on Shift=2
+//while Shift value change then
 $("#dropdownShifts").on("change", function () {
   if ($("#dropdownShifts").val() == 2) {
     // Interval Change 2
     interval = interval / 2;
     $("#slider2").parent().show();
+    
+    //update the slider1 incordance their interval
+    updateSlider();
+
+    //roundup the upperbound of slider1 
+    //update the roundup value in slider1
+    s1.update({to:roundOffCeiling(toVal)});
+    
+    //update slider2
+    updateSlider2();
   } else {
     // Interval Change 3
     interval = interval * 2;
     $("#slider2").parent().hide();
   }
-  updateSlider();
-  updateSlider2(interval);
 });
 
 // @return(): boolean
 function isExtendableShift() {
   let AccumulationShiftTime = timeOfShiftOne + timeOfShiftSecond;
-  console.log(AccumulationShiftTime >= 2*interval ? false : true);
-  return AccumulationShiftTime >= 2*interval ? false : true;
+  console.log(AccumulationShiftTime >= 2 * interval ? false : true);
+  return AccumulationShiftTime >= 2 * interval ? false : true;
 }
 
 // check extendableTime if it's availabe or not whether it's availabe in first or secornd slide
 // @return :number(extendable time)
 function extendableTime() {
- console.log(2*interval,timeOfShiftOne,timeOfShiftSecond);
-  console.log(2*interval - (timeOfShiftOne + timeOfShiftSecond));
-  return 2*interval - (timeOfShiftOne + timeOfShiftSecond);
+  console.log(2 * interval, timeOfShiftOne, timeOfShiftSecond);
+  console.log(2 * interval - (timeOfShiftOne + timeOfShiftSecond));
+  return 2 * interval - (timeOfShiftOne + timeOfShiftSecond);
 }
 
+//check interval time b/w first slide and second slide
 function checkInterval() {
   return fromVal2 - toVal - 200;
 }
@@ -382,8 +389,47 @@ function checkIntervalFirstSlide() {
   return toVal - fromVal;
 }
 
-// function roundOffCordinates(){
-//   fromVal = Math.floor(fromVal);
-//   toval = 
-// }
+function numberFormat(str) {
+  let arr = Array.from(str);
+  if (arr[0] != '0') {
+    if (arr[1])
+      return str;
+    else if (!arr[1]) {
+      return arr[0] + '0';
+    } else {
+      return arr[1] + "0"
+    }
+  }
+  else if (arr[0] === '0') {
+    if (arr[1]) return "0" + arr[1];
+
+  }
+  return '00'
+}
+// console.log(numberFormat("1"))
+function roundOffCeiling(num) {
+  let decimalTime, values;
+  let res;
+  //take upperbound of first slide
+  decimalTime = num / 100;
+
+  //make string array by bifurcating the  integer value and decimal value
+  values = decimalTime.toString().split(".");
+  // check for round off &update decimal time
+  //handle the case of undefined in values[1]
+  if (values[1]) {
+    if (+numberFormat(values[1]) + 50 >= 100) {
+      res = values[0] * 100 + 100;
+    } else {
+      if (+numberFormat(values[1]) >= 25)
+        res = values[0] * 100 + 50;
+      else
+        res = values[0] * 100;
+    }
+  } else {
+    res = toVal;
+  }
+  console.log(res);
+  return res;
+}
 
