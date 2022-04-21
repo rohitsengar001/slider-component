@@ -98,7 +98,7 @@ $(document).ready(function () {
     drag_interval: true,
     // from_fixed: true,
     // to_fixed: true ,
-    // min_interval: 100,
+    min_interval: 100,
     // max_interval: 300,
     onStart: function (data) {
       timeOfShiftOne = toVal - fromVal;
@@ -221,33 +221,35 @@ $(document).ready(function () {
         //check if first slider lowerbound is smaller than 700 after add extendableTime
         //extendableTime: whether it's postive or negative
         //then update upperbound of slider1 if space is not available besides lowerbound
-        if (fromVal - extendableTime() < 700) {
-          fromVal = 700;
-          s1.update({
-            to: toVal + extendableTime(),
-          });
-        } else {
-          fromVal = fromVal - extendableTime();
-          s1.update({
-            from: fromVal,
-          });
-        }
+        // if (fromVal - extendableTime() < 700) {
+        //   fromVal = 700;
+        //   s1.update({
+        //     to: toVal + extendableTime(),
+        //   });
+        // } else {
+        //   fromVal = fromVal - extendableTime();
+        //   s1.update({
+        //     from: fromVal,
+        //   });
+        // }
       } else {
         //change in lowerbound slider2
         fromVal2 = data.from;
-        if (fromVal - extendableTime() < 700) {
-          s1.update({
-            to: toVal + extendableTime(),
-          });
-        } else {
-          fromVal = fromVal - extendableTime();
-          s1.update({
-            from: fromVal,
-          });
-        }
+        // if (fromVal - extendableTime() < 700) {
+        //   s1.update({
+        //     to: toVal + extendableTime(),
+        //   });
+        // } else {
+        //   fromVal = fromVal - extendableTime();
+        //   s1.update({
+        //     from: fromVal,
+        //   });
+        // }
       }
     },
     onUpdate: function (data) {
+      toVal2=data.to;
+      fromVal2=data.from;
       timeOfShiftSecond = data.to - data.from;
     },
   });
@@ -364,6 +366,8 @@ function increaseOrDecreaseSlider2() {
       to: toVal2 + extendableTime(),
     });
   }
+  toVal2 = toVal2 + extendableTime();
+  console.log("toval2 from slider2=>"+toVal2);
 }
 //for testing purpose
 function showAllCordinates() {
