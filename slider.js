@@ -389,7 +389,7 @@ function checkIntervalFirstSlide() {
   return toVal - fromVal;
 }
 
-function numberFormat(str) {
+function numberNewFormat(str) {
   let arr = Array.from(str);
   if (arr[0] != '0') {
     if (arr[1])
@@ -418,10 +418,10 @@ function roundOffCeiling(num) {
   // check for round off &update decimal time
   //handle the case of undefined in values[1]
   if (values[1]) {
-    if (+numberFormat(values[1]) + 50 >= 100) {
+    if (+numberNewFormat(values[1]) + 50 >= 100) {
       res = values[0] * 100 + 100;
     } else {
-      if (+numberFormat(values[1]) >= 25)
+      if (+numberNewFormat(values[1]) >= 25)
         res = values[0] * 100 + 50;
       else
         res = values[0] * 100;
