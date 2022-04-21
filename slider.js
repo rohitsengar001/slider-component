@@ -70,7 +70,7 @@ function my_prettify(n) {
 }
 //slider1 logic
 let interval = 250;
-let timeOfShiftOne;
+let globalInterval=250;
 let timeOfShiftSecond;
 let fromVal = 800;
 let toVal = fromVal + interval;
@@ -253,12 +253,12 @@ $(document).ready(function () {
   });
   s2 = $("#slider2").data("ionRangeSlider");
 });
-function updateSlider() {
+function updateSlider(intervalVal) {
   console.log("updateSlider 1");
   $("#wizardErr").html("");
   $("#slider1Cont").show();
   fromVal = 800;
-  toVal = fromVal + interval;
+  toVal = fromVal + intervalVal;
   s1.update({
     from: fromVal,
     to: toVal,
@@ -287,7 +287,7 @@ $("#dropdownShifts").on("change", function () {
     $("#slider2").parent().show();
     
     //update the slider1 incordance their interval
-    updateSlider();
+    updateSlider(interval);
 
     //roundup the upperbound of slider1 
     //update the roundup value in slider1
@@ -298,6 +298,7 @@ $("#dropdownShifts").on("change", function () {
   } else {
     // Interval Change 3
     interval = interval * 2;
+    updateSlider(interval);
     $("#slider2").parent().hide();
   }
 });
