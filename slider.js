@@ -201,7 +201,7 @@ $(document).ready(function () {
     from_shadow: true,
     to_shadow: true,
     min_interval: 100,
-    max_interval: 300,
+    max_interval: interval-100,
     onStart: function (data) {
       timeOfShiftSecond = data.to - data.from;
       toogleForBoundarySlider1();
@@ -209,6 +209,7 @@ $(document).ready(function () {
     onChange: function (data) {
       // fromVal2= data.from;
       // toVal2= data.to;
+      
     },
     onFinish: function (data) {
       // console.log('onFinish');
@@ -221,30 +222,31 @@ $(document).ready(function () {
         //check if first slider lowerbound is smaller than 700 after add extendableTime
         //extendableTime: whether it's postive or negative
         //then update upperbound of slider1 if space is not available besides lowerbound
-        // if (fromVal - extendableTime() < 700) {
-        //   fromVal = 700;
-        //   s1.update({
-        //     to: toVal + extendableTime(),
-        //   });
-        // } else {
-        //   fromVal = fromVal - extendableTime();
-        //   s1.update({
-        //     from: fromVal,
-        //   });
-        // }
+        if (fromVal - extendableTime() < 700) {
+          fromVal = 700;
+          s1.update({
+            to: toVal + extendableTime(),
+          });
+        } else {
+          fromVal = fromVal - extendableTime();
+          s1.update({
+            from: fromVal,
+          });
+        }
       } else {
         //change in lowerbound slider2
         fromVal2 = data.from;
-        // if (fromVal - extendableTime() < 700) {
-        //   s1.update({
-        //     to: toVal + extendableTime(),
-        //   });
-        // } else {
-        //   fromVal = fromVal - extendableTime();
-        //   s1.update({
-        //     from: fromVal,
-        //   });
-        // }
+        console.log("fromval change");
+        if (fromVal - extendableTime() < 700) {
+          s1.update({
+            to: toVal + extendableTime(),
+          });
+        } else {
+          fromVal = fromVal - extendableTime();
+          s1.update({
+            from: fromVal,
+          });
+        }
       }
     },
     onUpdate: function (data) {
