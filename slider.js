@@ -1,57 +1,79 @@
 const convertFrom24To12Format = (time24) => {
-  const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{1,2})/).slice(1);
+  const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
   const period = +sHours < 12 ? "AM" : "PM";
-  // const hours = +sHours % 12 || 12;
-  hours = +sHours > 12 ? +sHours% 12 : +sHours;
-  console.log("convert=>"+`${hours}:${minutes} ${period}`);
+  const hours = +sHours % 12 || 12;
   return `${hours}:${minutes} ${period}`;
 };
-function numberFormat(str){
-  let arr =Array.from(str);
-  if(arr[0] != '0'){
-      if(arr[1] )
-         return str;
-      else if(!arr[1]) {
-          return "0"+arr[0];
-      }else{
-          return arr[1]+"0"
-      }         
-  } 
-  else if(arr[0] === '0'){
-      if(arr[1]) return arr[1];
+function numberFormat(str) {
+  let arr = Array.from(str);
+  if (arr[0] != '0') {
+    if (arr[1])
+      return str;
+    else if (!arr[1]) {
+      return "0" + arr[0];
+    } else {
+      return arr[1] + "0"
+    }
+  }
+  else if (arr[0] === '0') {
+    if (arr[1]) return "0" + arr[1];
+
   }
   return '00'
 }
+function convertNumToTime(number) {
+  // Check sign of given number
+  var sign = (number >= 0) ? 1 : -1;
+
+  // Set positive value of number of sign negative
+  number = number * sign;
+
+  // Separate the int from the decimal part
+  var hour = Math.floor(number);
+  var decpart = number - hour;
+
+  var min = 1 / 60;
+  // Round to nearest minute
+  decpart = min * Math.round(decpart / min);
+
+  var minute = Math.floor(decpart * 60) + '';
+
+  // Add padding if need
+  if (minute.length < 2) {
+    minute = '0' + minute;
+  }
+
+  // Add Sign in final result
+  sign = sign == 1 ? '' : '-';
+
+  // Concate hours and minutes
+  time = sign + hour + ':' + minute;
+
+  return time;
+}
+
 function my_prettify(n) {
-  console.log("value of n:",n);
   let a = parseInt(n) / 100;
   let b = a.toString().split(".");
   // console.log(b[0], b[1]);
   let d = "00";
-  let flag = false;
   if (b[1]) {
-    flag = true;
-    if (+numberFormat(b[1]) > 60 && b[1]) {
-      let hrs = 1;
-      let min = (+b[1] % 60)/100
-      b[0] = String((+b[0]) + hrs);
-      //manage digits in minutes
-      d = numberFormat(min);
-      // d=(min);
+    if (b[1] < 50 && b[1] != 5) {
+      d = "00";
     } else {
-      d = b[1];
+      d = "30";
     }
   }
   let c = b[0] + ":" + d + ":00";
-  console.log("=>", c+","+d);
+  // console.log(c);
   return convertFrom24To12Format(c);
 }
 //slider1 logic
-let interval = 400;
-let timeOfShiftOne;
+let interval = 250;
+let globalInterval=250;
 let timeOfShiftSecond;
 let fromVal = 800;
-let toVal = 1200;
+let toVal = fromVal + interval;
 let fromVal2 = 800;
 let toVal2 = 1200;
 var s1;
@@ -70,13 +92,13 @@ $(document).ready(function () {
     from: fromVal,
     to: toVal,
     to_max: 1600,
-    step: 1,
+    step: 50,
     to_shadow: true,
     prettify: my_prettify,
     drag_interval: true,
     // from_fixed: true,
     // to_fixed: true ,
-    // min_interval: 100,
+    min_interval: 100,
     // max_interval: 300,
     onStart: function (data) {
       timeOfShiftOne = toVal - fromVal;
@@ -116,10 +138,10 @@ $(document).ready(function () {
           //case 2: when lower-bound change
           console.log("fromval change");
           changeValue = fromVal - prevlb;
-          if (fromVal <= 1600) {
-            s1.update({
-              to: toVal + changeValue,
-            });
+          if (fromVal <= 2000 - interval) {
+            console.log("changeValue:", changeValue);
+            (checkIntervalFirstSlide() != interval) ? s1.update({ to: toVal + changeValue, }) : null;
+
           } else {
             s1.update({
               from: prevlb,
@@ -130,7 +152,7 @@ $(document).ready(function () {
           // case 3: when upperbound change
           changeValue = toVal - prevub;
           console.log("toval change" + changeValue);
-          if (data.to >= 1100) {
+          if (data.to >= 700 + interval) {
             console.log(data.from + "," + data.to);
             console.log("case: from>1100");
             // toVal = data.to;
@@ -173,13 +195,13 @@ $(document).ready(function () {
     max: 2000,
     from: fromVal2,
     to: toVal2,
-    step: 1,
+    step: 50,
     prettify: my_prettify,
     drag_interval: true,
     from_shadow: true,
     to_shadow: true,
     min_interval: 100,
-    max_interval: 300,
+    max_interval: interval-100,
     onStart: function (data) {
       timeOfShiftSecond = data.to - data.from;
       toogleForBoundarySlider1();
@@ -187,6 +209,7 @@ $(document).ready(function () {
     onChange: function (data) {
       // fromVal2= data.from;
       // toVal2= data.to;
+      
     },
     onFinish: function (data) {
       // console.log('onFinish');
@@ -213,6 +236,7 @@ $(document).ready(function () {
       } else {
         //change in lowerbound slider2
         fromVal2 = data.from;
+        console.log("fromval change");
         if (fromVal - extendableTime() < 700) {
           s1.update({
             to: toVal + extendableTime(),
@@ -226,69 +250,79 @@ $(document).ready(function () {
       }
     },
     onUpdate: function (data) {
+      toVal2=data.to;
+      fromVal2=data.from;
       timeOfShiftSecond = data.to - data.from;
     },
   });
   s2 = $("#slider2").data("ionRangeSlider");
 });
-function updateSlider() {
-  // console.log("SLIDER 1");
+function updateSlider(intervalVal) {
+  console.log("updateSlider 1");
   $("#wizardErr").html("");
   $("#slider1Cont").show();
   fromVal = 800;
-  toVal = fromVal + interval;
+  toVal = fromVal + intervalVal;
   s1.update({
     from: fromVal,
     to: toVal,
   });
   timeOfShiftOne = toVal - fromVal;
 }
-function updateSlider2(gap) {
+function updateSlider2() {
   $("#wizardErr").html("");
   // console.log("SLIDER 2");
   // console.log("Interval: "+(interval*2)+":"+gap);
-  fromVal2 = toVal;
-  toVal2 = fromVal2 + (interval * 2 - gap);
+  fromVal2 = toVal +200;
+  toVal2 = fromVal2 +interval*2- checkIntervalFirstSlide();
   s2.update({
-    from: fromVal2 + 200, //2 hrs gap
-    to: toVal2 + 200,
+    from: fromVal2,//2 hrs gap
+    to: toVal2,
     from_min: toVal + 200,
     from_max: 2000,
   });
   timeOfShiftSecond = toVal2 - fromVal2;
-  fromVal2 += 200;
-  toVal2 += 200;
-  toogleForBoundarySlider1();
 }
-//on Shift=2
+//while Shift value change then
 $("#dropdownShifts").on("change", function () {
   if ($("#dropdownShifts").val() == 2) {
     // Interval Change 2
     interval = interval / 2;
     $("#slider2").parent().show();
+    
+    //update the slider1 incordance their interval
+    updateSlider(interval);
+
+    //roundup the upperbound of slider1 
+    //update the roundup value in slider1
+    s1.update({to:roundOffCeiling(toVal)});
+    
+    //update slider2
+    updateSlider2();
   } else {
     // Interval Change 3
     interval = interval * 2;
+    updateSlider(interval);
     $("#slider2").parent().hide();
   }
-  updateSlider();
-  updateSlider2(interval);
 });
 
 // @return(): boolean
 function isExtendableShift() {
   let AccumulationShiftTime = timeOfShiftOne + timeOfShiftSecond;
-  console.log(AccumulationShiftTime >= 400 ? false : true);
-  return AccumulationShiftTime >= 400 ? false : true;
+  console.log(AccumulationShiftTime >= 2 * interval ? false : true);
+  return AccumulationShiftTime >= 2 * interval ? false : true;
 }
 
 // check extendableTime if it's availabe or not whether it's availabe in first or secornd slide
 // @return :number(extendable time)
 function extendableTime() {
-  console.log(400 - (timeOfShiftOne + timeOfShiftSecond));
-  return 400 - (timeOfShiftOne + timeOfShiftSecond);
+  console.log(2 * interval, timeOfShiftOne, timeOfShiftSecond);
+  console.log(2 * interval - (timeOfShiftOne + timeOfShiftSecond));
+  return 2 * interval - (timeOfShiftOne + timeOfShiftSecond);
 }
 
+//check interval time b/w first slide and second slide
 function checkInterval() {
   return fromVal2 - toVal - 200;
 }
@@ -334,6 +368,8 @@ function increaseOrDecreaseSlider2() {
       to: toVal2 + extendableTime(),
     });
   }
+  toVal2 = toVal2 + extendableTime();
+  console.log("toval2 from slider2=>"+toVal2);
 }
 //for testing purpose
 function showAllCordinates() {
@@ -346,7 +382,6 @@ function toogleForBoundarySlider1() {
     s1.update({
       to_max: 1600,
       max_interval: 300,
-      min_interval: 100,
     });
   } else {
     s1.update({
@@ -360,3 +395,48 @@ function checkIntervalFirstSlide() {
   console.log(toVal - fromVal);
   return toVal - fromVal;
 }
+
+function numberNewFormat(str) {
+  let arr = Array.from(str);
+  if (arr[0] != '0') {
+    if (arr[1])
+      return str;
+    else if (!arr[1]) {
+      return arr[0] + '0';
+    } else {
+      return arr[1] + "0"
+    }
+  }
+  else if (arr[0] === '0') {
+    if (arr[1]) return "0" + arr[1];
+
+  }
+  return '00'
+}
+// console.log(numberFormat("1"))
+function roundOffCeiling(num) {
+  let decimalTime, values;
+  let res;
+  //take upperbound of first slide
+  decimalTime = num / 100;
+
+  //make string array by bifurcating the  integer value and decimal value
+  values = decimalTime.toString().split(".");
+  // check for round off &update decimal time
+  //handle the case of undefined in values[1]
+  if (values[1]) {
+    if (+numberNewFormat(values[1]) + 50 >= 100) {
+      res = values[0] * 100 + 100;
+    } else {
+      if (+numberNewFormat(values[1]) >= 25)
+        res = values[0] * 100 + 50;
+      else
+        res = values[0] * 100;
+    }
+  } else {
+    res = toVal;
+  }
+  console.log(res);
+  return res;
+}
+
