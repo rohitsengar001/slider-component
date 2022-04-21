@@ -99,7 +99,7 @@ $(document).ready(function () {
     // from_fixed: true,
     // to_fixed: true ,
     min_interval: 100,
-    // max_interval: 300,
+    max_interval: interval-100,
     onStart: function (data) {
       timeOfShiftOne = toVal - fromVal;
       console.log("onstart");
@@ -286,6 +286,8 @@ function updateSlider2() {
 //while Shift value change then
 $("#dropdownShifts").on("change", function () {
   if ($("#dropdownShifts").val() == 2) {
+    //toggle for slider 1
+    toogleForBoundarySlider1();
     // Interval Change 2
     interval = interval / 2;
     $("#slider2").parent().show();
@@ -300,6 +302,7 @@ $("#dropdownShifts").on("change", function () {
     //update slider2
     updateSlider2();
   } else {
+    toogleForBoundarySlider1()
     // Interval Change 3
     interval = interval * 2;
     updateSlider(interval);
@@ -381,7 +384,7 @@ function toogleForBoundarySlider1() {
   if ($("#dropdownShifts").val() == 2) {
     s1.update({
       to_max: 1600,
-      max_interval: 300,
+      // max_interval: 300,
     });
   } else {
     s1.update({
